@@ -151,7 +151,7 @@ public class SQLDirectory extends AbstractDirectory {
         try (Connection sqlConnection = getConnection()) {
             dialect = Dialect.createDialect(sqlConnection, null);
             // setup table and fields maps
-            String tableName = descriptor.tableName == null ? descriptor.name : descriptor.tableName;
+            String tableName = (descriptor.tableName == null) ? descriptor.name : descriptor.tableName;
             table = SQLHelper.addTable(tableName, dialect, useNativeCase());
             SchemaManager schemaManager = Framework.getService(SchemaManager.class);
             schema = schemaManager.getSchema(getSchema());

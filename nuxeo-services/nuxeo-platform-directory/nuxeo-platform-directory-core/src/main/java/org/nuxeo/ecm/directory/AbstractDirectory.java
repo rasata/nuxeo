@@ -221,7 +221,8 @@ public abstract class AbstractDirectory implements Directory {
         if (references.containsKey(fieldName)) {
             fieldRefs = references.get(fieldName);
         } else {
-            references.put(fieldName, fieldRefs = new ArrayList<>(1));
+            fieldRefs = new ArrayList<>(1);
+            references.put(fieldName, fieldRefs);
         }
         fieldRefs.add(reference);
     }
