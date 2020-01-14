@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.localconfiguration.LocalConfigurationService;
 import org.nuxeo.ecm.directory.api.DirectoryService;
@@ -68,6 +69,12 @@ public class DirectoryServiceImpl extends DefaultComponent implements DirectoryS
     @Override
     public void unregisterDirectoryDescriptor(BaseDirectoryDescriptor descriptor) {
         registry.removeContribution(descriptor);
+    }
+
+    @Override
+    public void loadCSV(String directoryName, Blob dataFile, String duplicateManagement) {
+        Directory directory = getDirectoryOrFail(directoryName);
+        directory.loadFromCsv(dataFile, false, duplicateManagement);
     }
 
     @Override

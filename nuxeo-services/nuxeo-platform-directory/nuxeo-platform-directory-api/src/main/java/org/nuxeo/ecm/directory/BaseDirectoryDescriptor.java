@@ -90,6 +90,19 @@ public class BaseDirectoryDescriptor implements Cloneable {
     public static final List<String> CREATE_TABLE_POLICIES = Arrays.asList(CREATE_TABLE_POLICY_NEVER,
             CREATE_TABLE_POLICY_ALWAYS, CREATE_TABLE_POLICY_ON_MISSING_COLUMNS);
 
+    /**
+     * append CSV file policy.
+     * 
+     * @since 11.1
+     */
+    public enum DataLoadingPolicy {
+        NEVER_LOAD, IGNORE_DUPLICATE, ERROR_ON_DUPLICATE, UPDATE_DUPLICATE;
+
+        public static DataLoadingPolicy valueOfUpperCase(String enumName) {
+            return DataLoadingPolicy.valueOf(enumName.toUpperCase());
+        }
+    }
+
     @XNode("@name")
     public String name;
 
@@ -199,7 +212,7 @@ public class BaseDirectoryDescriptor implements Cloneable {
         } else {
             sep = dataFileCharacterSeparator.charAt(0);
             if (dataFileCharacterSeparator.length() > 1) {
-                log.warn("More than one character found for character separator, will use the first one \"{}\"",sep);
+                log.warn("More than one character found for character separator, will use the first one \"{}\"", sep);
             }
         }
         return sep;
@@ -218,6 +231,29 @@ public class BaseDirectoryDescriptor implements Cloneable {
                     + CREATE_TABLE_POLICIES);
         }
         return ctp;
+    }
+
+    /**
+     * @since 11.1
+     */
+    @XNode("dataLoadingPolicy")
+    public String dataLoadingPolicy;
+
+    /**
+     * return The dataLoadingPolicy; default to {@link DataLoadingPolicy#NEVER_LOAD}.
+     *
+     * @since 11.1
+     */
+    public DataLoadingPolicy getDataLoadingPolicy() {
+        if (StringUtils.isBlank(dataLoadingPolicy)) {
+            return DataLoadingPolicy.NEVER_LOAD;
+        }
+        try {
+            return DataLoadingPolicy.valueOfUpperCase(dataLoadingPolicy);
+        } catch (IllegalArgumentException e) {
+            throw new DirectoryException("Invalid dataLoadingPolicy: " + dataLoadingPolicy + ", it should be one of: "
+                    + Arrays.asList(DataLoadingPolicy.values()));
+        }
     }
 
     public boolean isReadOnly() {
@@ -346,6 +382,9 @@ public class BaseDirectoryDescriptor implements Cloneable {
         }
         if (other.createTablePolicy != null) {
             createTablePolicy = other.createTablePolicy;
+        }
+        if (other.dataLoadingPolicy != null) {
+            dataLoadingPolicy = other.dataLoadingPolicy;
         }
         if (other.references != null && other.references.length != 0) {
             references = other.references;
