@@ -23,7 +23,7 @@ import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.nuxeo.runtime.mongodb.MongoDBFeature.DEFAULT_MONGODB_DBNAME;
+import static org.nuxeo.runtime.mongodb.MongoDBFeature.MONGODB_DBNAME_PROPERTY;
 
 import javax.inject.Inject;
 
@@ -41,6 +41,7 @@ import org.nuxeo.ecm.core.api.security.ACL;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.api.security.impl.ACPImpl;
 import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.mongodb.MongoDBFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -83,11 +84,13 @@ public class TestMongoDBIndices {
             fail("should throw a ConcurrentUpdateException");
         } catch (ConcurrentUpdateException cue) {
             assertEquals(SC_CONFLICT, cue.getStatusCode());
+            String mongoDBName = Framework.getProperties().getProperty(MONGODB_DBNAME_PROPERTY);
             assertTrue(
                     cue.getMessage()
                        .contains(String.format(
                                "E11000 duplicate key error collection: %s.test index: ecm:parentId_1_ecm:name_1 dup key: { : \"%s\", : \"%s\" }",
-                               DEFAULT_MONGODB_DBNAME, folder.getId(), DOCUMENT_NAME)));
+                               mongoDBName, folder.getId(), DOCUMENT_NAME)));
+
         }
     }
 
