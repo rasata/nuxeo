@@ -6,6 +6,8 @@
     <schema name="schema2" src="schema/schema2.xsd" />
     <schema name="schema3" src="schema/schema3.xsd" />
     <schema name="common" src="schema/common.xsd" />
+    <schema name="facetSchema1" src="schema/facetSchema1.xsd" />
+    <schema name="facetSchema2" src="schema/facetSchema2.xsd" />
   </extension>
 
 
@@ -52,6 +54,12 @@
         <type>myFolder</type>
       </subtypes>
     </doctype>
+    <facet name="fakeFacet1">
+      <schema name="facetSchema1" />
+    </facet>
+    <facet name="fakeFacet2">
+      <schema name="facetSchema2" />
+    </facet>
   </extension>
 
 

@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -443,6 +444,20 @@ public class TestSchemaManager {
         DocumentType t = schemaManager.getDocumentType("MyMergeableFolder");
         assertEquals(t.getFacets(), Set.of("specdoc", "specdoc2", "specdoc3", "specdoc4"));
         assertEquals(t.getAllowedSubtypes(), Set.of("myDoc2", "myDoc3", "myDoc4"));
+    }
+
+    @Test
+    @Deploy("org.nuxeo.ecm.core.schema.tests:OSGI-INF/CoreTestExtensions.xml")
+    public void shouldGetFacets() {
+        var facets = Map.of( //
+                "fakeFacet1", "facetSchema1", //
+                "fakeFacet2", "facetSchema2");
+        for (var entry : facets.entrySet()) {
+            CompositeType component = schemaManager.getFacet(entry.getKey());
+            assertNotNull(String.format("Facet %s should exist", entry.getKey()), component);
+            assertEquals(1, component.getSchemas().size());
+            assertEquals(entry.getValue(), component.getSchemaNames()[0]);
+        }
     }
 
 }
